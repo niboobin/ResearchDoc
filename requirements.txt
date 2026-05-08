@@ -1,0 +1,6 @@
+django
+django-allauth
+pillow
+python-dotenv
+bleach
+requests
