@@ -1,0 +1,184 @@
+{% extends "base/auth_base.html" %}
+{% load socialaccount %}
+
+{% block title %}Create your account · ResearchDoc{% endblock %}
+
+{% block content %}
+<div class="min-h-screen grid lg:grid-cols-2">
+
+  {# Brand panel #}
+  <div class="relative hidden lg:flex flex-col p-10 overflow-hidden"
+       style="background: linear-gradient(160deg, #0d3a36 0%, #161616 100%);">
+    <div class="absolute inset-0 pointer-events-none"
+         style="background: radial-gradient(circle at 80% 0%, rgba(13,148,136,0.16), transparent 60%);"></div>
+
+    <div class="relative flex items-center gap-2.5">
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#0d9488] text-white font-bold">R</span>
+      <span class="font-semibold text-[15px]">ResearchDoc</span>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <div class="relative max-w-md">
+      <p class="text-[26px] leading-snug font-semibold tracking-tight" style="font-family: 'Source Serif 4', Georgia, serif;">
+        &ldquo;The structured citation chips alone saved me a week of cleanup before submission.&rdquo;
+      </p>
+      <div class="mt-5 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-purple-400 inline-flex items-center justify-center font-semibold text-sm text-white">RO</div>
+        <div>
+          <div class="text-sm font-medium">Dr. Rita Okafor</div>
+          <div class="text-xs text-[#9b9b9b]">Postdoc · Information Retrieval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Form panel #}
+  <div class="flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-sm">
+
+      <div class="lg:hidden flex items-center gap-2.5 mb-8">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#0d9488] text-white font-bold">R</span>
+        <span class="font-semibold text-[15px]">ResearchDoc</span>
+      </div>
+
+      <h1 class="text-[26px] font-semibold tracking-tight" style="font-family: 'Source Serif 4', Georgia, serif;">
+        Create your account
+      </h1>
+      <p class="text-sm text-[#9b9b9b] mt-1.5 mb-7">Free for individuals. No credit card.</p>
+
+      {% get_providers as socialaccount_providers %}
+      {% if socialaccount_providers %}
+        <a href="{% provider_login_url 'google' process='signup' %}"
+           class="w-full h-10 rounded-lg bg-[#252525] border border-[#3a3a3a] hover:bg-[#2f2f2f] hover:border-[#4a4a4a] inline-flex items-center justify-center gap-2.5 text-sm font-medium transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+            <path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8.1Z"/>
+            <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.2-4.6H2.1v2.8A11 11 0 0 0 12 23Z"/>
+            <path fill="#FBBC05" d="M5.8 14a6.6 6.6 0 0 1 0-4.2V7H2.1a11 11 0 0 0 0 9.8L5.8 14Z"/>
+            <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.1 7l3.7 2.8C6.6 7.3 9.1 5.4 12 5.4Z"/>
+          </svg>
+          Sign up with Google
+        </a>
+
+        <div class="flex items-center gap-3 my-5">
+          <div class="flex-1 h-px bg-[#3a3a3a]"></div>
+          <span class="text-[11px] text-[#6e6e6e] tracking-wide">OR</span>
+          <div class="flex-1 h-px bg-[#3a3a3a]"></div>
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'account_signup' %}" class="space-y-4">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 text-xs px-3 py-2">
+            {{ form.non_field_errors|join:" " }}
+          </div>
+        {% endif %}
+
+        <div>
+          <label for="id_email" class="block text-xs font-medium mb-1.5">Email</label>
+          <input id="id_email" name="email" type="email" required autocomplete="email"
+                 value="{{ form.email.value|default:'' }}"
+                 class="w-full h-10 px-3 rounded-lg bg-[#252525] border border-[#3a3a3a] text-sm placeholder:text-[#6e6e6e] focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/30">
+          {% if form.email.errors %}
+            <p class="mt-1 text-xs text-red-300">{{ form.email.errors|join:" " }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="id_password1" class="block text-xs font-medium mb-1.5">Password</label>
+          <div class="relative">
+            <input id="id_password1" name="password1" type="password" required autocomplete="new-password"
+                   data-strength-target="rd-strength"
+                   class="w-full h-10 pl-3 pr-10 rounded-lg bg-[#252525] border border-[#3a3a3a] text-sm focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/30">
+            <button type="button" data-toggle-password="id_password1"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-7 h-7 text-[#6e6e6e] hover:text-[#efefef]"
+                    aria-label="Show password">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+
+          <div id="rd-strength" class="mt-2 flex gap-1" data-strength="0">
+            <div class="flex-1 h-[3px] rounded-full bg-[#3a3a3a]" data-bar="1"></div>
+            <div class="flex-1 h-[3px] rounded-full bg-[#3a3a3a]" data-bar="2"></div>
+            <div class="flex-1 h-[3px] rounded-full bg-[#3a3a3a]" data-bar="3"></div>
+            <div class="flex-1 h-[3px] rounded-full bg-[#3a3a3a]" data-bar="4"></div>
+          </div>
+          <p id="rd-strength-label" class="mt-1.5 text-[11px] text-[#9b9b9b]">At least 8 characters with mixed case and a number.</p>
+
+          {% if form.password1.errors %}
+            <p class="mt-1 text-xs text-red-300">{{ form.password1.errors|join:" " }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="id_password2" class="block text-xs font-medium mb-1.5">Confirm password</label>
+          <div class="relative">
+            <input id="id_password2" name="password2" type="password" required autocomplete="new-password"
+                   class="w-full h-10 pl-3 pr-10 rounded-lg bg-[#252525] border border-[#3a3a3a] text-sm focus:outline-none focus:border-[#0d9488] focus:ring-2 focus:ring-[#0d9488]/30">
+            <button type="button" data-toggle-password="id_password2"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-7 h-7 text-[#6e6e6e] hover:text-[#efefef]"
+                    aria-label="Show password">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          {% if form.password2.errors %}
+            <p class="mt-1 text-xs text-red-300">{{ form.password2.errors|join:" " }}</p>
+          {% endif %}
+        </div>
+
+        {{ redirect_field }}
+
+        <button type="submit"
+                class="w-full h-10 rounded-lg bg-[#0d9488] hover:bg-[#0f766e] text-white font-semibold text-sm inline-flex items-center justify-center gap-2 transition">
+          Create account
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div class="text-center text-sm text-[#9b9b9b] mt-6">
+        Already have an account?
+        <a href="{% url 'account_login' %}" class="text-[#0d9488] hover:text-[#14b8a6] font-medium">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.togglePassword);
+      if (!input) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  (function () {
+    var input = document.getElementById('id_password1');
+    var meter = document.getElementById('rd-strength');
+    var label = document.getElementById('rd-strength-label');
+    if (!input || !meter) return;
+    var bars = meter.querySelectorAll('[data-bar]');
+    function score(pw) {
+      var s = 0;
+      if (pw.length >= 8) s++;
+      if (pw.length >= 12) s++;
+      if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+      if (/[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw)) s++;
+      return s;
+    }
+    var labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    var colors = ['#3a3a3a', '#ef4444', '#f59e0b', '#0d9488', '#10b981'];
+    input.addEventListener('input', function () {
+      var s = score(input.value);
+      bars.forEach(function (b, i) {
+        b.style.background = i < s ? colors[s] : '#3a3a3a';
+      });
+      label.textContent = input.value
+        ? labels[s] + ' — at least 8 characters with mixed case and a number.'
+        : 'At least 8 characters with mixed case and a number.';
+    });
+  })();
+</script>
+{% endblock %}

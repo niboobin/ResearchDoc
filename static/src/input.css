@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-brand-bg: #191919;
+  --color-brand-surface: #252525;
+  --color-brand-surface-2: #2f2f2f;
+  --color-brand-border: #3a3a3a;
+  --color-brand-text: #efefef;
+  --color-brand-muted: #9b9b9b;
+  --color-brand-accent: #0d9488;
+  --color-brand-accent-hover: #0f766e;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
