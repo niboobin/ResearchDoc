@@ -40,12 +40,15 @@ ALLOWED_TAGS = [
     'ul', 'ol', 'li',
     'blockquote', 'code', 'pre', 'br',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'span',
 ]
 ALLOWED_ATTRS = {'*': ['class', 'data-citation-id']}
+_DANGEROUS_BLOCK = re.compile(r'<(script|style)\b[^>]*>.*?</\1>', re.IGNORECASE | re.DOTALL)
 
 
 def sanitize_html(raw: str) -> str:
-    return bleach.clean(raw or '', tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True)
+    raw = _DANGEROUS_BLOCK.sub('', raw or '')
+    return bleach.clean(raw, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True)
 
 
 def _parse_tags(raw: str):
@@ -390,10 +393,16 @@ def summary_edit(request, pk):
         Citation.objects.filter(summary=summary, resource_id__in=existing - valid_ids).delete()
         for rid in valid_ids - existing:
             Citation.objects.create(summary=summary, resource_id=rid)
+        messages.success(request, 'Summary saved.')
         return redirect('summary_edit', pk=summary.pk)
 
     resources = summary.project.resources.all()
-    return HttpResponse('ok')
+    cited_ids = set(Citation.objects.filter(summary=summary).values_list('resource_id', flat=True))
+    return render(request, 'summaries/edit.html', {
+        'summary': summary,
+        'resources': resources,
+        'cited_ids': cited_ids,
+    })
 
 
 @login_required
@@ -401,9 +410,14 @@ def summary_delete(request, pk):
     summary = get_object_or_404(Summary, pk=pk, project__user=request.user)
     if request.method == 'POST':
         project_pk = summary.project.pk
+        title = summary.title
         summary.delete()
+        messages.success(request, f'Summary &ldquo;{title}&rdquo; deleted.')
         return redirect('project_detail', pk=project_pk)
-    return HttpResponse('ok')
+    return render(request, 'summaries/confirm_delete.html', {
+        'summary': summary,
+        'citation_count': summary.citations.count(),
+    })
 
 
 @login_required
@@ -424,8 +438,9 @@ def comparison_edit(request, pk):
         comparison.title = request.POST.get('title', comparison.title).strip() or comparison.title
         comparison.body = sanitize_html(request.POST.get('body', ''))
         comparison.save()
+        messages.success(request, 'Comparison saved.')
         return redirect('comparison_edit', pk=comparison.pk)
-    return HttpResponse('ok')
+    return render(request, 'comparisons/edit.html', {'comparison': comparison})
 
 
 @login_required
@@ -433,32 +448,60 @@ def comparison_delete(request, pk):
     comparison = get_object_or_404(ComparisonTable, pk=pk, project__user=request.user)
     if request.method == 'POST':
         project_pk = comparison.project.pk
+        title = comparison.title
         comparison.delete()
+        messages.success(request, f'Comparison &ldquo;{title}&rdquo; deleted.')
         return redirect('project_detail', pk=project_pk)
-    return HttpResponse('ok')
+    return render(request, 'comparisons/confirm_delete.html', {'comparison': comparison})
 
 
 @login_required
 def search(request):
     q = (request.GET.get('q') or '').strip()
+    active = request.GET.get('type') or 'all'
+
+    counts = {'projects': 0, 'resources': 0, 'summaries': 0, 'comparisons': 0}
     projects = resources = summaries = comparisons = []
+
     if q:
-        projects = Project.objects.filter(
-            user=request.user
-        ).filter(Q(title__icontains=q) | Q(description__icontains=q))
-
-        resources = Resource.objects.filter(
-            project__user=request.user
-        ).filter(
-            Q(title__icontains=q) | Q(authors__icontains=q) | Q(annotation__icontains=q)
+        projects_qs = Project.objects.filter(user=request.user).filter(
+            Q(title__icontains=q) | Q(description__icontains=q)
         )
+        resources_qs = Resource.objects.filter(project__user=request.user).filter(
+            Q(title__icontains=q) | Q(authors__icontains=q) | Q(annotation__icontains=q)
+        ).select_related('project')
+        summaries_qs = Summary.objects.filter(project__user=request.user).filter(
+            Q(title__icontains=q) | Q(body__icontains=q)
+        ).select_related('project')
+        comparisons_qs = ComparisonTable.objects.filter(project__user=request.user).filter(
+            Q(title__icontains=q) | Q(body__icontains=q)
+        ).select_related('project')
 
-        summaries = Summary.objects.filter(
-            project__user=request.user
-        ).filter(Q(title__icontains=q) | Q(body__icontains=q))
+        counts = {
+            'projects': projects_qs.count(),
+            'resources': resources_qs.count(),
+            'summaries': summaries_qs.count(),
+            'comparisons': comparisons_qs.count(),
+        }
 
-        comparisons = ComparisonTable.objects.filter(
-            project__user=request.user
-        ).filter(Q(title__icontains=q))
+        if active in ('all', 'projects'):
+            projects = list(projects_qs[:50])
+        if active in ('all', 'resources'):
+            resources = list(resources_qs[:50])
+        if active in ('all', 'summaries'):
+            summaries = list(summaries_qs[:50])
+        if active in ('all', 'comparisons'):
+            comparisons = list(comparisons_qs[:50])
 
-    return HttpResponse('ok')
+    total = sum(counts.values())
+
+    return render(request, 'search.html', {
+        'q': q,
+        'active': active,
+        'counts': counts,
+        'total': total,
+        'projects': projects,
+        'resources': resources,
+        'summaries': summaries,
+        'comparisons': comparisons,
+    })

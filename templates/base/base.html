@@ -16,13 +16,29 @@
     <div id="rd-flash" class="fixed top-4 right-4 z-50 flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)]">
       {% for message in messages %}
         {% if message.tags == 'success' %}
-          <div class="rd-flash rounded-lg border px-4 py-3 text-sm shadow-lg bg-[#0d9488]/15 border-[#0d9488]/40 text-[#5eead4]">{{ message }}</div>
+          <div class="rd-flash relative overflow-hidden rounded-lg border border-[#3a3a3a] bg-[#1f1f1f] shadow-xl text-sm text-[#efefef] flex items-start gap-2.5 pl-4 pr-3 py-3">
+            <span class="absolute left-0 top-0 bottom-0 w-1 bg-[#0d9488]"></span>
+            <svg class="w-4 h-4 text-[#14b8a6] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 12 5 5L20 7"/></svg>
+            <span class="flex-1 leading-snug">{{ message|safe }}</span>
+          </div>
         {% elif message.tags == 'error' %}
-          <div class="rd-flash rounded-lg border px-4 py-3 text-sm shadow-lg bg-red-500/15 border-red-500/40 text-red-300">{{ message }}</div>
+          <div class="rd-flash relative overflow-hidden rounded-lg border border-[#3a3a3a] bg-[#1f1f1f] shadow-xl text-sm text-[#efefef] flex items-start gap-2.5 pl-4 pr-3 py-3">
+            <span class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></span>
+            <svg class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4M12 16h.01"/></svg>
+            <span class="flex-1 leading-snug">{{ message|safe }}</span>
+          </div>
         {% elif message.tags == 'warning' %}
-          <div class="rd-flash rounded-lg border px-4 py-3 text-sm shadow-lg bg-amber-500/15 border-amber-500/40 text-amber-300">{{ message }}</div>
+          <div class="rd-flash relative overflow-hidden rounded-lg border border-[#3a3a3a] bg-[#1f1f1f] shadow-xl text-sm text-[#efefef] flex items-start gap-2.5 pl-4 pr-3 py-3">
+            <span class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></span>
+            <svg class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4M12 17h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+            <span class="flex-1 leading-snug">{{ message|safe }}</span>
+          </div>
         {% else %}
-          <div class="rd-flash rounded-lg border px-4 py-3 text-sm shadow-lg bg-[#252525] border-[#3a3a3a] text-[#efefef]">{{ message }}</div>
+          <div class="rd-flash relative overflow-hidden rounded-lg border border-[#3a3a3a] bg-[#1f1f1f] shadow-xl text-sm text-[#efefef] flex items-start gap-2.5 pl-4 pr-3 py-3">
+            <span class="absolute left-0 top-0 bottom-0 w-1 bg-[#3a3a3a]"></span>
+            <svg class="w-4 h-4 text-[#9b9b9b] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8h.01M11 12h1v4h1"/></svg>
+            <span class="flex-1 leading-snug">{{ message|safe }}</span>
+          </div>
         {% endif %}
       {% endfor %}
     </div>

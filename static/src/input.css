@@ -12,3 +12,129 @@
   --color-brand-accent-hover: #0f766e;
   --font-sans: 'Inter', system-ui, sans-serif;
 }
+
+/* Manuscript-style prose for the summary editor (contenteditable) */
+.rd-prose h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin: 24px 0 12px; }
+.rd-prose h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin: 28px 0 10px; }
+.rd-prose h3 { font-size: 18px; font-weight: 600; margin: 22px 0 8px; }
+.rd-prose h4 { font-size: 16px; font-weight: 600; margin: 18px 0 6px; }
+.rd-prose p  { margin: 0 0 14px; }
+.rd-prose ul, .rd-prose ol,
+.ProseMirror ul, .ProseMirror ol {
+  margin: 0 0 14px !important;
+  padding-left: 24px !important;
+}
+.rd-prose ul, .ProseMirror ul { list-style: disc !important; }
+.rd-prose ol, .ProseMirror ol { list-style: decimal !important; }
+.rd-prose ul ul, .ProseMirror ul ul { list-style: circle !important; }
+.rd-prose ul ul ul, .ProseMirror ul ul ul { list-style: square !important; }
+.rd-prose li, .ProseMirror li { margin-bottom: 4px; display: list-item; }
+.rd-prose li > p, .ProseMirror li > p { margin: 0; }
+.rd-prose blockquote {
+  border-left: 3px solid #0d9488;
+  margin: 14px 0; padding: 4px 14px;
+  color: #9b9b9b;
+}
+.rd-prose code {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  background: #252525; padding: 1px 5px; border-radius: 3px;
+}
+.rd-prose pre {
+  background: #252525; border: 1px solid #3a3a3a;
+  border-radius: 7px; padding: 12px; overflow: auto;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px; line-height: 1.5;
+}
+.rd-prose table {
+  width: 100%; border-collapse: collapse; margin: 14px 0;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 13px;
+}
+.rd-prose th, .rd-prose td {
+  border: 1px solid #3a3a3a; padding: 8px 12px; text-align: left;
+}
+.rd-prose th { background: #1a1a1a; font-weight: 600; }
+
+/* Inline citation chip */
+.rd-citation {
+  display: inline-flex; align-items: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11.5px; font-weight: 600;
+  background: rgba(13, 148, 136, 0.16);
+  color: #14b8a6;
+  padding: 1px 6px; border-radius: 3px;
+  border: 1px solid rgba(13, 148, 136, 0.4);
+  margin: 0 1px; vertical-align: baseline;
+  text-decoration: none; cursor: pointer;
+  user-select: all;
+}
+
+/* Empty-state placeholder for contenteditable editor */
+.rd-empty-editor:empty::before,
+.rd-empty-editor:has(br:only-child)::before {
+  content: attr(data-placeholder);
+  color: #6e6e6e;
+  font-style: italic;
+  pointer-events: none;
+}
+
+/* TipTap toolbar button */
+.rd-tb-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem;
+  border-radius: 0.375rem;
+  color: #9b9b9b;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.rd-tb-btn:hover { background: #252525; color: #efefef; }
+.rd-tb-btn.is-active {
+  background: rgba(13, 148, 136, 0.16);
+  color: #14b8a6;
+}
+
+/* TipTap placeholder (ProseMirror Placeholder extension) */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #6e6e6e;
+  font-style: italic;
+  pointer-events: none;
+  height: 0;
+  float: left;
+}
+
+/* TipTap table styling — match rd-prose */
+.ProseMirror table {
+  width: 100%; border-collapse: collapse; margin: 14px 0;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 13px;
+  table-layout: fixed;
+}
+.ProseMirror table th,
+.ProseMirror table td {
+  border: 1px solid #3a3a3a; padding: 8px 12px; text-align: left;
+  vertical-align: top; min-width: 60px;
+}
+.ProseMirror table th { background: #1a1a1a; font-weight: 600; }
+.ProseMirror .selectedCell {
+  background: rgba(13, 148, 136, 0.18);
+}
+
+/* Gap cursor (between blocks like tables) */
+.ProseMirror-gapcursor {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+}
+.ProseMirror-gapcursor::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px;
+  width: 20px;
+  border-top: 1px solid #efefef;
+  animation: rd-blink 1.1s steps(2, start) infinite;
+}
+.ProseMirror-focused .ProseMirror-gapcursor { display: block; }
+@keyframes rd-blink { to { visibility: hidden; } }
