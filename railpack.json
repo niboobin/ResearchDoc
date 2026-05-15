@@ -9,7 +9,8 @@
       "commands": [
         "npm install",
         "npm run build",
-        "python manage.py collectstatic --noinput -i src"
+        "python manage.py collectstatic --noinput -i src",
+        "python manage.py migrate --noinput"
       ]
     }
   },
