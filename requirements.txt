@@ -4,3 +4,13 @@ pillow
 python-dotenv
 bleach
 requests
+requests-oauthlib
+pyjwt
+cryptography
+openai
+pypdf
+beautifulsoup4
+dj-database-url
+psycopg2-binary
+whitenoise
+gunicorn
