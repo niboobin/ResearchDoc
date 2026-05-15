@@ -9,12 +9,11 @@
       "commands": [
         "npm install",
         "npm run build",
-        "python manage.py collectstatic --noinput -i src",
-        "python manage.py migrate --noinput"
+        "python manage.py collectstatic --noinput -i src"
       ]
     }
   },
   "deploy": {
-    "startCommand": "gunicorn researchdoc.wsgi --log-file - --workers 2 --timeout 60"
+    "startCommand": "python manage.py migrate --noinput && gunicorn researchdoc.wsgi --log-file - --workers 2 --timeout 60"
   }
 }
