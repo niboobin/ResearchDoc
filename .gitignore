@@ -45,3 +45,6 @@ Thumbs.db
 htmlcov/
 .pytest_cache/
 .tox/
+
+# Local-only env vars pulled by hosting CLIs
+.env*.local

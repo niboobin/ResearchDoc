@@ -14,6 +14,7 @@ urlpatterns = [
     path('projects/<int:project_pk>/resources/new/', views.resource_create, name='resource_create'),
     path('resources/<int:pk>/edit/', views.resource_edit, name='resource_edit'),
     path('resources/<int:pk>/delete/', views.resource_delete, name='resource_delete'),
+    path('resources/<int:pk>/generate/', views.resource_generate_annotation, name='resource_generate_annotation'),
 
     path('projects/<int:project_pk>/summaries/new/', views.summary_create, name='summary_create'),
     path('summaries/<int:pk>/edit/', views.summary_edit, name='summary_edit'),

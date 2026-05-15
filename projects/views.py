@@ -346,6 +346,21 @@ def resource_edit(request, pk):
 
 
 @login_required
+def resource_generate_annotation(request, pk):
+    if request.method != 'POST':
+        return redirect('resource_edit', pk=pk)
+    resource = get_object_or_404(Resource, pk=pk, project__user=request.user)
+    from .ai import generate_annotation, AISummaryError
+    try:
+        resource.annotation = generate_annotation(resource)
+        resource.save()
+        messages.success(request, f'AI annotation generated for &ldquo;{resource.title}&rdquo;.')
+    except AISummaryError as exc:
+        messages.error(request, str(exc))
+    return redirect('resource_edit', pk=resource.pk)
+
+
+@login_required
 def resource_delete(request, pk):
     resource = get_object_or_404(Resource, pk=pk, project__user=request.user)
     if request.method == 'POST':

@@ -1430,6 +1430,13 @@
       }
     }
   }
+  .hover\:bg-\[\#0d9488\]\/25 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in oklab, #0d9488 25%, transparent);
+      }
+    }
+  }
   .hover\:bg-\[\#0f766e\] {
     &:hover {
       @media (hover: hover) {
@@ -1520,6 +1527,16 @@
     &:focus {
       --tw-outline-style: none;
       outline-style: none;
+    }
+  }
+  .disabled\:cursor-wait {
+    &:disabled {
+      cursor: wait;
+    }
+  }
+  .disabled\:opacity-50 {
+    &:disabled {
+      opacity: 50%;
     }
   }
   .sm\:flex {
